@@ -269,3 +269,17 @@ where schemaname in ('xpfeed');
 ``` sql
 select pg_size_pretty(pg_relation_size('table_name'));
 ```
+
+* foreign table schema update  
+
+``` sql
+-- Every time changed the foreign db schema, need drop and reimport
+DROP FOREIGN TABLE foreignDB.tableA;
+import foreign schema foreignDB limit to (tableA) from server db_link into foreignDB;
+
+-- drop all then import whole insight schema
+select 'DROP FOREIGN TABLE if exists foreignDB.' || table_name || ';'  drop_ft_statement
+from information_schema.tables
+where table_schema = 'foreignDB' and table_type = 'FOREIGN TABLE';
+import foreign schema foreignDB from server db_link into foreignDB;
+```
